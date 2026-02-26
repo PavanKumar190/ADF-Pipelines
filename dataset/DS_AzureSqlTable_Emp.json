@@ -1,0 +1,41 @@
+{
+	"name": "DS_AzureSqlTable_Emp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureSqlDatabase",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EmpID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EmpName",
+				"type": "varchar"
+			},
+			{
+				"name": "EmpAddress",
+				"type": "varchar"
+			},
+			{
+				"name": "Salary",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DeptNo",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Employee_Info"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

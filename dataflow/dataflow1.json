@@ -1,0 +1,64 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_Employee_Source_File",
+						"type": "DatasetReference"
+					},
+					"name": "EmpSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Employee_Target_File",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EmpNo as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Salary as string,",
+				"          DeptNo as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EmpSource",
+				"EmpSource derive({Full Name} = concat(FirstName,' ',LastName)) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          EmpNo,",
+				"          {Full Name},",
+				"          Salary,",
+				"          DeptNo",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['employee_target.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

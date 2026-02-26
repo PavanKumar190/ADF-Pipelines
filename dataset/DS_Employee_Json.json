@@ -1,0 +1,48 @@
+{
+	"name": "DS_Employee_Json",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "employees.json",
+				"folderPath": "Employees",
+				"fileSystem": "source"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"employee": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"firstName": {
+								"type": "string"
+							},
+							"lastName": {
+								"type": "string"
+							},
+							"Salary": {
+								"type": "string"
+							},
+							"DeptNo": {
+								"type": "integer"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

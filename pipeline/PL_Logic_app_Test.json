@@ -1,0 +1,116 @@
+{
+	"name": "PL_Logic_app_Test",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_Customers_Source_File",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_Target_Customers_File",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"url": "https://prod-28.centralus.logic.azure.com:443/workflows/0b85ed92d5854bf58cbd3bd8633f35bf/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=Xvxk7Tp0mGn5lxEwwQvQnvhDg9OhFojWiNILE8cV7PY",
+					"body": {
+						"value": "{\n  \"Pipeline Name\": \"@{pipeline().Pipeline}\",\n  \"Pipeline Run ID\": \"@{pipeline().RunId}\",\n  \"Failure Time\":\"@{utcNow()}\",\n  \"Error Message\":\"@{activity('Copy data1').Error.message}\"\n}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Fail1",
+				"type": "Fail",
+				"dependsOn": [
+					{
+						"activity": "Web1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"message": "Please check the file, if that exist ot not ...?",
+					"errorCode": " UserErrorFileNotFound"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-02-17T13:58:02Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

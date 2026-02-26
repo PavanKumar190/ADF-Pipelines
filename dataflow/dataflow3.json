@@ -1,0 +1,84 @@
+{
+	"name": "dataflow3",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_Cust_Bangalore",
+						"type": "DatasetReference"
+					},
+					"name": "CustBangsalore"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Cust_Hyderabad",
+						"type": "DatasetReference"
+					},
+					"name": "CustHyderabad"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Cust_Chennai",
+						"type": "DatasetReference"
+					},
+					"name": "CustChennai"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Target_All_Customers",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "union1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {CustID } as string,",
+				"          {Full Name} as string,",
+				"          City as string,",
+				"          {Phone No} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CustBangsalore",
+				"source(output(",
+				"          {CustID } as string,",
+				"          {Full Name} as string,",
+				"          City as string,",
+				"          {Phone No} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CustHyderabad",
+				"source(output(",
+				"          {CustID } as string,",
+				"          {Full Name} as string,",
+				"          City as string,",
+				"          {Phone No} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> CustChennai",
+				"CustBangsalore, CustHyderabad, CustChennai union(byName: true)~> union1",
+				"union1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['All_Customers.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

@@ -1,0 +1,54 @@
+{
+	"name": "Json1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Customers.json",
+				"folderPath": "customers",
+				"fileSystem": "source"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string"
+				},
+				"firstName": {
+					"type": "string"
+				},
+				"lastName": {
+					"type": "string"
+				},
+				"age": {
+					"type": "integer"
+				},
+				"address": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"street": {
+								"type": "string"
+							},
+							"city": {
+								"type": "string"
+							},
+							"state": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

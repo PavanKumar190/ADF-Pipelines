@@ -1,0 +1,54 @@
+{
+	"name": "PL_StoreProcedure",
+	"properties": {
+		"activities": [
+			{
+				"name": "Stored procedure1",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_Update_Product_Standard_Cost]",
+					"storedProcedureParameters": {
+						"New_StandardCost": {
+							"value": {
+								"value": "@pipeline().parameters.pNewStandardCost",
+								"type": "Expression"
+							},
+							"type": "Decimal"
+						},
+						"productID": {
+							"value": {
+								"value": "@pipeline().parameters.pProductID",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"pProductID": {
+				"type": "int"
+			},
+			"pNewStandardCost": {
+				"type": "float"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-02-16T17:03:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,48 @@
+{
+	"name": "PL_Script_Activity",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "select ProductID,\n       Name,\n       Color,\n       StandardCost\nfrom SalesLT.[product]\nwhere ProductID = 680\n"
+						},
+						{
+							"type": "NonQuery",
+							"text": "UPDATE SalesLT.Product \nSET StandardCost = 3000.00\nWHERE ProductID = 750\n"
+						},
+						{
+							"type": "NonQuery",
+							"text": "CREATE TABLE dbo.Details\n(\nID INT,\nName varchar(50)\n)"
+						},
+						{
+							"type": "NonQuery",
+							"text": "INSERT INTO dbo.Details VALUES \n(101,'Naresh'),\n(102,'Pavan')"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-02-16T17:28:42Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,80 @@
+{
+	"name": "dataflow8",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_Products_Unpivot",
+						"type": "DatasetReference"
+					},
+					"name": "ProductsPivot"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Products_Unpivot_Target",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "unpivot1"
+				},
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Color as string,",
+				"          {S-TotalStandardCost} as string,",
+				"          {M-TotalStandardCost} as string,",
+				"          {L-TotalStandardCost} as string,",
+				"          {XL-TotalStandardCost} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: true,",
+				"     ignoreNoFilesFound: false) ~> ProductsPivot",
+				"ProductsPivot unpivot(output(",
+				"          Size as string,",
+				"          {S-TotalStandardCost} as string",
+				"     ),",
+				"     ungroupBy(Color),",
+				"     lateral: true,",
+				"     ignoreNullPivots: false) ~> unpivot1",
+				"unpivot1 derive(Size = iif(Size == 'S-TotalStandardCost','Small', iif(Size == 'M-TotalStandardCost','Medium',iif(Size == 'L-TotalStandardCost','Large',iif(Size == 'XL-TotalStandardCost','XL', Size ))))) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          Color,",
+				"          Size,",
+				"          TotalStandardCost = {S-TotalStandardCost}",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Color as string,",
+				"          {S-TotalStandardCost} as string,",
+				"          {M-TotalStandardCost} as string,",
+				"          {L-TotalStandardCost} as string,",
+				"          {XL-TotalStandardCost} as string",
+				"     ),",
+				"     partitionFileNames:['Products_Unpivot_Data.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
