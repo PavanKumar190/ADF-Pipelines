@@ -1,0 +1,79 @@
+{
+	"name": "dataflow13",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_Emp_Source",
+						"type": "DatasetReference"
+					},
+					"name": "EmpSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Rank_Windows",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "rank1"
+				},
+				{
+					"name": "rank2"
+				},
+				{
+					"name": "window1"
+				},
+				{
+					"name": "window2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EmpNo as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Salary as string,",
+				"          DeptNo as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EmpSource",
+				"EmpSource rank(desc(Salary, true),",
+				"     output(Salary_Rank as long)) ~> rank1",
+				"rank1 rank(desc(Salary, true),",
+				"     output(Salary_DenseRank as long),",
+				"     dense: true) ~> rank2",
+				"rank2 window(desc(Salary, true),",
+				"     RowNumber = rowNumber()) ~> window1",
+				"window1 window(desc(Salary, true),",
+				"     SalaryRank1 = rank()) ~> window2",
+				"window2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmpID as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          City as string,",
+				"          State as string,",
+				"          Salary as string,",
+				"          DeptNo as string",
+				"     ),",
+				"     partitionFileNames:['Employee_Rank_Windows.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}

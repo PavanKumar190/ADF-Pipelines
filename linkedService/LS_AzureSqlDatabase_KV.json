@@ -1,0 +1,24 @@
+{
+	"name": "LS_AzureSqlDatabase_KV",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "training-centralus-sqlserver-dev21.database.windows.net",
+			"database": "training-CentralUS-SQLdb-Dev21",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "pavansqladmin",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "secret-azure-sql-password"
+			}
+		}
+	}
+}

@@ -1,0 +1,142 @@
+{
+	"name": "dataflow2",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_Employee",
+						"type": "DatasetReference"
+					},
+					"name": "Employee"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Department",
+						"type": "DatasetReference"
+					},
+					"name": "Department"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Dept10",
+						"type": "DatasetReference"
+					},
+					"name": "sinkDept10"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Dept20",
+						"type": "DatasetReference"
+					},
+					"name": "sinkDept20"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_OtherDept",
+						"type": "DatasetReference"
+					},
+					"name": "sinkOtherDept"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EmpNo as string,",
+				"          FirstName as string,",
+				"          LastName as string,",
+				"          Salary as string,",
+				"          DeptNo as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Employee",
+				"source(output(",
+				"          DeptNo as integer,",
+				"          DeptName as string,",
+				"          Location as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Department",
+				"Employee, Department join(Employee@DeptNo == Department@DeptNo,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"join1 select(mapColumn(",
+				"          EmpNo,",
+				"          FirstName,",
+				"          LastName,",
+				"          Salary,",
+				"          DeptNo = Employee@DeptNo,",
+				"          DeptName,",
+				"          Location",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 split(DeptNo == 10,",
+				"     DeptNo == 20,",
+				"     disjoint: false) ~> split1@(Dept10, Dept20, OtherDept)",
+				"split1@Dept10 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmpNo as string,",
+				"          {Full Name} as string,",
+				"          Salary as string,",
+				"          DeptNo as string",
+				"     ),",
+				"     partitionFileNames:['Employees_Dept10.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkDept10",
+				"split1@Dept20 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmpNo as string,",
+				"          {Full Name} as string,",
+				"          Salary as string,",
+				"          DeptNo as string",
+				"     ),",
+				"     partitionFileNames:['Employees_Dept20.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkDept20",
+				"split1@OtherDept sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          EmpNo as string,",
+				"          {Full Name} as string,",
+				"          Salary as string,",
+				"          DeptNo as string",
+				"     ),",
+				"     partitionFileNames:['Employees_OtherDept.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sinkOtherDept"
+			]
+		}
+	}
+}

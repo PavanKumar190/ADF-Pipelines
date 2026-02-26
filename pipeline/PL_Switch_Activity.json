@@ -1,0 +1,127 @@
+{
+	"name": "PL_Switch_Activity",
+	"properties": {
+		"activities": [
+			{
+				"name": "Switch1",
+				"type": "Switch",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@pipeline().parameters.pDatabase",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "SAP",
+							"activities": [
+								{
+									"name": "Var SAP",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "vDatabaseSelection",
+										"value": "You are in \"SAP\" Database"
+									}
+								}
+							]
+						},
+						{
+							"value": "AWS",
+							"activities": [
+								{
+									"name": "Var AWS",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "vDatabaseSelection",
+										"value": "You are in \"AWS\" Database "
+									}
+								}
+							]
+						},
+						{
+							"value": "SQLServer",
+							"activities": [
+								{
+									"name": "Var SQL Server",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "vDatabaseSelection",
+										"value": "You are in \"SQL Server\" Database"
+									}
+								}
+							]
+						},
+						{
+							"value": "SnowFlake",
+							"activities": [
+								{
+									"name": "Var Snowflake",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "vDatabaseSelection",
+										"value": "You are in \"Snow Flake\" Database"
+									}
+								}
+							]
+						}
+					],
+					"defaultActivities": [
+						{
+							"name": "Var Oracle",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "vDatabaseSelection",
+								"value": "Your are in \"ORACLE Database Table"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"pDatabase": {
+				"type": "string",
+				"defaultValue": "Oracle"
+			}
+		},
+		"variables": {
+			"vDatabaseSelection": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-02-17T14:53:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,65 @@
+{
+	"name": "dataflow7",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"linkedService": {
+						"referenceName": "LS_AzureSqlDatabase",
+						"type": "LinkedServiceReference"
+					},
+					"name": "Products"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Products_Pivot",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "pivot1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          ProductID as integer,",
+				"          Name as string,",
+				"          ProductNumber as string,",
+				"          Color as string,",
+				"          Size as string,",
+				"          StandardCost as decimal(19,4)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: true,",
+				"     format: 'query',",
+				"     store: 'sqlserver',",
+				"     query: 'select ProductID,\\n       Name,\\n       ProductNumber,\\n       Color,\\n       Size,\\n       StandardCost\\nfrom SalesLT.Product',",
+				"     isolationLevel: 'READ_UNCOMMITTED') ~> Products",
+				"Products pivot(groupBy(Color),",
+				"     pivotBy(Size, ['S', 'M', 'L', 'XL']),",
+				"     TotalStandardCost = sum(StandardCost),",
+				"     columnNaming: '$V-$N',",
+				"     lateral: true) ~> pivot1",
+				"pivot1 derive(Color = iif(isNull(Color),'N/A',Color)) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Products_Pivot.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
+			]
+		}
+	}
+}
