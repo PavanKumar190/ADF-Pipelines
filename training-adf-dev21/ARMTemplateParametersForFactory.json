@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "training-adf-dev21"
+		},
+		"AzureSqlDatabase1_password": {
+			"value": ""
+		},
+		"LS_AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"LS_AzureSqlDatabase_password": {
+			"value": ""
+		},
+		"AzureSqlDatabase1_properties_typeProperties_server": {
+			"value": "training-centralus-sqlserver-dev21.database.windows.net"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_database": {
+			"value": "training-CentralUS-SQLdb-Dev21"
+		},
+		"AzureSqlDatabase1_properties_typeProperties_userName": {
+			"value": "pavansqladmin"
+		},
+		"LS_AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://trainingusadlsdev21.dfs.core.windows.net/"
+		},
+		"LS_AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://training-keyvault-dev.vault.azure.net/"
+		},
+		"LS_AzureSqlDatabase_properties_typeProperties_server": {
+			"value": "training-centralus-sqlserver-dev21.database.windows.net"
+		},
+		"LS_AzureSqlDatabase_properties_typeProperties_database": {
+			"value": "training-CentralUS-SQLdb-Dev21"
+		},
+		"LS_AzureSqlDatabase_properties_typeProperties_userName": {
+			"value": "pavansqladmin"
+		},
+		"LS_AzureSqlDatabase_KV_properties_typeProperties_server": {
+			"value": "training-centralus-sqlserver-dev21.database.windows.net"
+		},
+		"LS_AzureSqlDatabase_KV_properties_typeProperties_database": {
+			"value": "training-CentralUS-SQLdb-Dev21"
+		},
+		"LS_AzureSqlDatabase_KV_properties_typeProperties_userName": {
+			"value": "pavansqladmin"
+		}
+	}
+}
